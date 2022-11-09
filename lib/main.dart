@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:new_parking/local_storage.dart';
 import 'package:new_parking/views/home_page/home_page.dart';
-import 'package:new_parking/views/user/login/login.dart';
+import 'package:new_parking/views/login/login.dart';
 
-void main() {
+void main() async {
+  await LocalStorage.init();
   runApp(const MyApp());
 }
 
@@ -17,7 +19,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Login(
+      home: LocalStorage.getString(LocalStorage.apiToken) != null
+          ? const MainHomePage()
+          : const Login(
         title: 'Parking',
       ),
     );

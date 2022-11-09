@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:new_parking/views/general_widgets/general_drower.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:new_parking/views/home_page/widgets/get_parked_car/show_parked_car_inputs/end_parking_submit_button.dart';
 import 'package:http/http.dart' as http;
-import '../../../../app/models/routes/route_api.dart';
+import 'package:new_parking/app/route_api.dart';
 
 class ShowParkedCarPage extends StatelessWidget {
   final dynamic clientName;
@@ -30,7 +28,7 @@ class ShowParkedCarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: _title,
-      home: ShowParkedCar(
+      home: ParkDetailsScreen(
         clientName: clientName,
         clientCarNumber: clientCarNumber,
         clientIdentificationNumber: clientIdentificationNumber,
@@ -41,14 +39,14 @@ class ShowParkedCarPage extends StatelessWidget {
   }
 }
 
-class ShowParkedCar extends StatefulWidget {
+class ParkDetailsScreen extends StatefulWidget {
   final String clientName;
   final String clientCarNumber;
   final String clientIdentificationNumber;
   final String licenceNumber;
   final String clientPhone;
 
-  const ShowParkedCar({
+  const ParkDetailsScreen({
     super.key,
     required this.clientName,
     required this.clientCarNumber,
@@ -58,9 +56,9 @@ class ShowParkedCar extends StatefulWidget {
   });
 
   @override
-  ShowParkedCarState createState() {
+  ParkDetailsScreenState createState() {
     // ignore: no_logic_in_create_state
-    return ShowParkedCarState(
+    return ParkDetailsScreenState(
       clientName: clientName,
       clientCarNumber: clientCarNumber,
       clientIdentificationNumber: clientIdentificationNumber,
@@ -70,14 +68,14 @@ class ShowParkedCar extends StatefulWidget {
   }
 }
 
-class ShowParkedCarState extends State<ShowParkedCar> {
+class ParkDetailsScreenState extends State<ParkDetailsScreen> {
   String clientName;
   String clientCarNumber;
   String clientIdentificationNumber;
   String licenceNumber;
   String clientPhone;
 
-  ShowParkedCarState({
+  ParkDetailsScreenState({
     required this.clientName,
     required this.clientCarNumber,
     required this.clientIdentificationNumber,
@@ -85,13 +83,14 @@ class ShowParkedCarState extends State<ShowParkedCar> {
     required this.clientPhone,
   });
 
-
   String _batteryLevel = 'Unknown printer status.';
 
   Future<void> startPrint() async {
     String batteryLevel;
     try {
-      final dynamic result = await const MethodChannel('com.example.new_parking/print').invokeMethod('startPrint');
+      final dynamic result =
+          await const MethodChannel('com.example.new_parking/print')
+              .invokeMethod('startPrint');
       batteryLevel = 'printer status is $result % .';
     } on PlatformException catch (e) {
       batteryLevel = "Failed to get printer status: '${e.message}'.";
@@ -134,71 +133,77 @@ class ShowParkedCarState extends State<ShowParkedCar> {
           ),
         ),
       ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0x665ac18e),
-                    Color(0x995ac18e),
-                    Color(0xcc5ac18e),
-                    Color(0xff5ac18e),
-                  ],
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0x665ac18e),
+              Color(0x995ac18e),
+              Color(0xcc5ac18e),
+              Color(0xff5ac18e),
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 25,
+            vertical: 70,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'New parking',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: 70,
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'New parking',
+                const SizedBox(height: 10),
+                Text(_batteryLevel),
+                Text(clientName),
+                Text(clientCarNumber),
+                Text(clientIdentificationNumber),
+                Text(licenceNumber),
+                Text(clientPhone),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 25),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsets.all(15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      // ignore: sort_child_properties_last
+                      child: const Text(
+                        'Create',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
+                          color: Color(0xff5ac18e),
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(_batteryLevel),
-                      Text(clientName),
-                      Text(clientCarNumber),
-                      Text(clientIdentificationNumber),
-                      Text(licenceNumber),
-                      Text(clientPhone),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: EndParkedSubmitButton(
-                          clientName: clientName,
-                          onPressed: () async {
-                           await startPrint();
-                            await endParkedCar(clientName);
-                            //Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                      onPressed: () async {
+                        await startPrint();
+                        await endParkedCar(clientName);
+                      }),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-      drawer: GeneralDrower.generalDrower(context),
     );
   }
 
@@ -230,9 +235,9 @@ class ShowParkedCarState extends State<ShowParkedCar> {
       //   ),
       // );
 
-      print('Number of books about http: ${jsonResponse["message"]}.');
+      debugPrint('Number of books about http: ${jsonResponse["message"]}.');
     } else {
-      print('Request failed with status: ${response.body}.');
+      debugPrint('Request failed with status: ${response.body}.');
     }
   }
 }
