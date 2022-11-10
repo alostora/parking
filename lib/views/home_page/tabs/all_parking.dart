@@ -1,82 +1,55 @@
 import 'package:flutter/material.dart';
 
+import '../../create_parking/create_parking.dart';
+
 class AllParkingScreen extends StatefulWidget {
   const AllParkingScreen({super.key});
 
   @override
-  AllParkingScreenState createState() {
-    return AllParkingScreenState();
-  }
+  State<AllParkingScreen> createState() => _AllParkingScreenState();
 }
 
-class AllParkingScreenState extends State<AllParkingScreen> {
-  final List<dynamic> _navigationBarElements = [
-    'www',
-    'sdfsdfsdf',
+class _AllParkingScreenState extends State<AllParkingScreen> {
+  final List<dynamic> _allCars = [
+    'Car 1',
+    'Car 2',
   ];
-  Widget allCars = Container(
-    padding: const EdgeInsets.all(32),
-    child: Row(
-      children: [
-        Expanded(
-          /*1*/
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /*2*/
-              Container(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: const Text(
-                  'Oeschinen Lake Campground',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Text(
-                'Kandersteg, Switzerland',
-                style: TextStyle(
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
-          ),
-        ),
-        /*3*/
-        Icon(
-          Icons.star,
-          color: Colors.red[500],
-        ),
-        const Text('41'),
-      ],
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Cars'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0x665ac18e),
-                Color(0x995ac18e),
-                Color(0xcc5ac18e),
-                Color(0xff5ac18e),
-              ],
+      appBar: AppBar(title: const Text('All Cars')),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateParkingScreen(),
             ),
-          ),
+          );
+        },
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
-      body: ListView.builder(
-        itemCount: _navigationBarElements.length,
-        itemBuilder: (context, index) {
-          return Text(_navigationBarElements[index]);
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: ListView.separated(
+          itemCount: 10,
+          separatorBuilder: (context, index) => const SizedBox(height: 5),
+          itemBuilder: (context, index) {
+            return Card(
+              elevation: 2.0,
+              child: ListTile(
+                leading: const Icon(Icons.car_repair, size: 40),
+                title: Text('Car ${index + 1}', style: Theme.of(context).textTheme.labelLarge),
+                subtitle: Text('Mahmoud Ashraf', style: Theme.of(context).textTheme.caption),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

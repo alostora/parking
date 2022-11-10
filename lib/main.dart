@@ -11,19 +11,18 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Parking',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: const ColorScheme.light(
+          primary: Colors.cyan,
+        ),
       ),
       home: LocalStorage.getString(LocalStorage.apiToken) != null
           ? const MainHomePage()
-          : const Login(
-        title: 'Parking',
-      ),
+          : const LoginScreen(),
     );
   }
 }
