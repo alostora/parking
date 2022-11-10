@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 import 'package:http/http.dart' as http;
 import '../../app/route_api.dart';
 import '../../local_storage.dart';
@@ -26,6 +27,10 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
 
   final _clientPhone = TextEditingController();
 
+  int _parkingType = 0;
+
+  final List<int> _status = [0, 1, 2];
+
   @override
   void dispose() {
     _clientName.dispose();
@@ -50,6 +55,13 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 30),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Parking Information',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
                 Container(
                   height: 50,
                   alignment: Alignment.centerLeft,
@@ -224,6 +236,29 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Parking Type',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                RadioGroup<int>.builder(
+                  groupValue: _parkingType,
+                  onChanged: (value) => setState(() {
+                    _parkingType = value ?? 0;
+                    debugPrint('Current parking type $value');
+                  }),
+                  items: _status,
+                  itemBuilder: (item) => RadioButtonBuilder(
+                    item == 0
+                        ? 'Valet Parking'
+                        : item == 1
+                            ? 'Vip Parking'
+                            : 'Per Hour Parking',
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -280,13 +315,16 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
       },
-      body: jsonEncode(<String, String>{
-        'clientName': clientName,
-        'clientCarNumber': clientCarNumber,
-        'clientIdentificationNumber': clientIdentificationNumber,
-        'licenceNumber': licenceNumber,
-        'clientPhone': clientPhone,
-      }),
+      body: jsonEncode(
+        {
+          'clientName': clientName,
+          'clientCarNumber': clientCarNumber,
+          'clientIdentificationNumber': clientIdentificationNumber,
+          'licenceNumber': licenceNumber,
+          'clientPhone': clientPhone,
+          'type': _parkingType.toString()
+        },
+      ),
     );
 
     if (response.statusCode == 200) {
@@ -298,11 +336,6 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
         MaterialPageRoute(
           builder: (context) => ParkingDetailsScreen(
             parkingId: jsonResponse['data']['id'],
-            clientName: clientName,
-            clientCarNumber: clientCarNumber,
-            clientIdentificationNumber: clientIdentificationNumber,
-            licenceNumber: licenceNumber,
-            clientPhone: clientPhone,
           ),
         ),
       );

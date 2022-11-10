@@ -160,9 +160,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-
+      print(jsonResponse);
       var token = jsonResponse['data']['token'];
+      var garage = jsonResponse['data']['garage']['id'];
       await LocalStorage.setString(LocalStorage.apiToken, token);
+      await LocalStorage.setString(LocalStorage.garageId, garage.toString());
       Navigator.push(
         context,
         MaterialPageRoute(

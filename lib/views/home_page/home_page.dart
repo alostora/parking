@@ -37,7 +37,7 @@ class _MainHomePageState extends State<MainHomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.car_rental_sharp),
-            label: 'All Cars',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.scanner),

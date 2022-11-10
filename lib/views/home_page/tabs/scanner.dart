@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:new_parking/views/details/parking_details_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _parkingIdController = TextEditingController();
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -51,10 +52,23 @@ class _ScannerScreenState extends State<ScannerScreen> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async {
       setState(() {
         result = scanData;
       });
+      if (result != null && (result?.code ?? '').isNotEmpty) {
+        await controller.stopCamera();
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ParkingDetailsScreen(
+              parkingId: result!.code,
+            ),
+          ),
+        );
+        await controller.resumeCamera();
+      }
     });
   }
 
@@ -107,7 +121,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         onPressed: () async {
                           await controller?.resumeCamera();
                         },
-                        child: const Text('Start', style: TextStyle(fontSize: 20),),
+                        child: const Text(
+                          'Start',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
                     Container(
@@ -116,12 +133,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         onPressed: () async {
                           await controller?.pauseCamera();
                         },
-                        child: const Text('Stop', style: TextStyle(fontSize: 20),),
+                        child: const Text(
+                          'Stop',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
                   ],
                 ),
-
                 Row(
                   children: [
                     Expanded(
@@ -133,7 +152,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
                         ),
                         child: TextField(
-                          controller: _phone,
+                          controller: _parkingIdController,
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             color: Colors.black87,
@@ -153,7 +172,16 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
-
+                          if (_parkingIdController.text.isNotEmpty) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ParkingDetailsScreen(
+                                  parkingId: _parkingIdController.text,
+                                ),
+                              ),
+                            );
+                          }
                         },
                         child: const Text('Get'),
                       ),

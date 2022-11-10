@@ -44,22 +44,23 @@ public class MainActivity extends FlutterActivity {
             @Override
             protected void onConnected(SunmiPrinterService service) {
                 try {
-                    service.printText(printString, new InnerResultCallback() {
+                    service.printOriginalText(printString, new InnerResultCallback() {
                         @Override
-                        public void onRunResult(boolean isSuccess) throws RemoteException {
+                        public void onRunResult(boolean isSuccess) {
+                            Log.d("FLUTTER PRINTER", "onRunResult: " + isSuccess);
                         }
 
                         @Override
-                        public void onReturnString(String result) throws RemoteException {
+                        public void onReturnString(String result) {
                         }
 
                         @Override
-                        public void onRaiseException(int code, String msg) throws RemoteException {
+                        public void onRaiseException(int code, String msg) {
 
                         }
 
                         @Override
-                        public void onPrintResult(int code, String msg) throws RemoteException {
+                        public void onPrintResult(int code, String msg) {
 
                         }
                     });

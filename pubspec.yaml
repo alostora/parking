@@ -39,6 +39,7 @@ dependencies:
   http: ^0.13.5
   get_storage: ^2.0.3
   qr_code_scanner: ^1.0.1
+  group_radio_button: ^1.2.0
 
 dev_dependencies:
   flutter_test:
