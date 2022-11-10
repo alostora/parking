@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:group_radio_button/group_radio_button.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:new_parking/data/all_parking_response.dart';
 import '../../app/route_api.dart';
 import '../../local_storage.dart';
 import '../details/parking_details_screen.dart';
@@ -29,7 +30,7 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
 
   int _parkingType = 0;
 
-  final List<int> _status = [0, 1, 2];
+  ParkingModel? parkingModel;
 
   @override
   void dispose() {
@@ -46,266 +47,296 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Create new parking')),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 30),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Parking Information',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 30),
+              // const Padding(
+              //   padding: EdgeInsets.all(8.0),
+              //   child: Text(
+              //     'Parking Information',
+              //     style: TextStyle(fontWeight: FontWeight.w600),
+              //   ),
+              // ),
+              // Container(
+              //   height: 50,
+              //   alignment: Alignment.centerLeft,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black26,
+              //         blurRadius: 6,
+              //         offset: Offset(0, 2),
+              //       )
+              //     ],
+              //   ),
+              //   child: TextField(
+              //     controller: _clientName,
+              //     keyboardType: TextInputType.text,
+              //     style: const TextStyle(
+              //       color: Colors.black87,
+              //     ),
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       contentPadding: EdgeInsets.all(12),
+              //       // prefixIcon: Icon(
+              //       //   Icons.person,
+              //       //   color: Color(0xff5ac18e),
+              //       // ),
+              //       hintText: "Client Name",
+              //       hintStyle: TextStyle(
+              //         color: Colors.black38,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 10),
+              // Container(
+              //   height: 50,
+              //   alignment: Alignment.centerLeft,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black26,
+              //         blurRadius: 6,
+              //         offset: Offset(0, 2),
+              //       )
+              //     ],
+              //   ),
+              //   child: TextField(
+              //     controller: _clientCarNumber,
+              //     keyboardType: TextInputType.number,
+              //     style: const TextStyle(
+              //       color: Colors.black87,
+              //     ),
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       contentPadding: EdgeInsets.all(12),
+              //       // prefixIcon: Icon(
+              //       //   Icons.person,
+              //       //   color: Color(0xff5ac18e),
+              //       // ),
+              //       hintText: "Car Number",
+              //       hintStyle: TextStyle(
+              //         color: Colors.black38,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 10),
+              // Container(
+              //   height: 50,
+              //   alignment: Alignment.centerLeft,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black26,
+              //         blurRadius: 6,
+              //         offset: Offset(0, 2),
+              //       )
+              //     ],
+              //   ),
+              //   child: TextField(
+              //     controller: _clientIdentificationNumber,
+              //     keyboardType: TextInputType.text,
+              //     style: const TextStyle(
+              //       color: Colors.black87,
+              //     ),
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       contentPadding: EdgeInsets.all(12),
+              //       // prefixIcon: Icon(
+              //       //   Icons.person,
+              //       //   color: Color(0xff5ac18e),
+              //       // ),
+              //       hintText: "Identification Number",
+              //       hintStyle: TextStyle(
+              //         color: Colors.black38,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 10),
+              // Container(
+              //   height: 50,
+              //   alignment: Alignment.centerLeft,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black26,
+              //         blurRadius: 6,
+              //         offset: Offset(0, 2),
+              //       )
+              //     ],
+              //   ),
+              //   child: TextField(
+              //     controller: _licenceNumber,
+              //     keyboardType: TextInputType.text,
+              //     style: const TextStyle(
+              //       color: Colors.black87,
+              //     ),
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       contentPadding: EdgeInsets.all(12),
+              //       // prefixIcon: Icon(
+              //       //   Icons.person,
+              //       //   color: Color(0xff5ac18e),
+              //       // ),
+              //       hintText: "Licence Number",
+              //       hintStyle: TextStyle(
+              //         color: Colors.black38,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 10),
+              // Container(
+              //   height: 50,
+              //   alignment: Alignment.centerLeft,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(10),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black26,
+              //         blurRadius: 6,
+              //         offset: Offset(0, 2),
+              //       )
+              //     ],
+              //   ),
+              //   child: TextField(
+              //     controller: _clientPhone,
+              //     keyboardType: TextInputType.text,
+              //     style: const TextStyle(
+              //       color: Colors.black87,
+              //     ),
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       contentPadding: EdgeInsets.all(12),
+              //       // prefixIcon: Icon(
+              //       //   Icons.person,
+              //       //   color: Color(0xff5ac18e),
+              //       // ),
+              //       hintText: "Client Phone",
+              //       hintStyle: TextStyle(
+              //         color: Colors.black38,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Parking Type',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                 ),
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _clientName,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12),
-                      // prefixIcon: Icon(
-                      //   Icons.person,
-                      //   color: Color(0xff5ac18e),
-                      // ),
-                      hintText: "Client Name",
-                      hintStyle: TextStyle(
-                        color: Colors.black38,
-                      ),
+              ),
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  Radio(
+                      value: 0,
+                      groupValue: _parkingType,
+                      onChanged: (value) {
+                        _parkingType = value ?? 0;
+                        setState(() {});
+                        debugPrint('Current parking type $value');
+                      }),
+                  const Expanded(
+                    child: Text(
+                      'Valet Parking \n(150 SAR + %15 VAT)',
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Radio(
+                      value: 1,
+                      groupValue: _parkingType,
+                      onChanged: (value) {
+                        _parkingType = value ?? 0;
+                        setState(() {});
+                        debugPrint('Current parking type $value');
+                      }),
+                  const Expanded(
+                    child: Text(
+                      'Vip Parking \n(300 SAR + %15 VAT)',
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Radio(
+                      value: 2,
+                      groupValue: _parkingType,
+                      onChanged: (value) {
+                        _parkingType = value ?? 0;
+                        setState(() {});
+                        debugPrint('Current parking type $value');
+                      }),
+                  const Expanded(
+                    child: Text(
+                      'Per Hour Parking \n(15 SAR + %15 VAT)',
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text(
+                    'Create',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    createParkingCar(context);
+                  },
                 ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _clientCarNumber,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12),
-                      // prefixIcon: Icon(
-                      //   Icons.person,
-                      //   color: Color(0xff5ac18e),
-                      // ),
-                      hintText: "Car Number",
-                      hintStyle: TextStyle(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _clientIdentificationNumber,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12),
-                      // prefixIcon: Icon(
-                      //   Icons.person,
-                      //   color: Color(0xff5ac18e),
-                      // ),
-                      hintText: "Identification Number",
-                      hintStyle: TextStyle(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _licenceNumber,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12),
-                      // prefixIcon: Icon(
-                      //   Icons.person,
-                      //   color: Color(0xff5ac18e),
-                      // ),
-                      hintText: "Licence Number",
-                      hintStyle: TextStyle(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 50,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _clientPhone,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12),
-                      // prefixIcon: Icon(
-                      //   Icons.person,
-                      //   color: Color(0xff5ac18e),
-                      // ),
-                      hintText: "Client Phone",
-                      hintStyle: TextStyle(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Parking Type',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                RadioGroup<int>.builder(
-                  groupValue: _parkingType,
-                  onChanged: (value) => setState(() {
-                    _parkingType = value ?? 0;
-                    debugPrint('Current parking type $value');
-                  }),
-                  items: _status,
-                  itemBuilder: (item) => RadioButtonBuilder(
-                    item == 0
-                        ? 'Valet Parking'
-                        : item == 1
-                            ? 'Vip Parking'
-                            : 'Per Hour Parking',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: const Text(
-                      'Create',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {
-                      createParkingCar(
-                        context,
-                        _clientName.text,
-                        _clientCarNumber.text,
-                        _clientIdentificationNumber.text,
-                        _licenceNumber.text,
-                        _clientPhone.text,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  createParkingCar(
-    context,
-    clientName,
-    clientCarNumber,
-    clientIdentificationNumber,
-    licenceNumber,
-    clientPhone,
-  ) async {
+  createParkingCar(context) async {
     var url = Uri.parse(RouteApi.mainUrl + RouteApi.parkingCar);
 
     var response = await http.post(
@@ -317,11 +348,11 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
       },
       body: jsonEncode(
         {
-          'clientName': clientName,
-          'clientCarNumber': clientCarNumber,
-          'clientIdentificationNumber': clientIdentificationNumber,
-          'licenceNumber': licenceNumber,
-          'clientPhone': clientPhone,
+          // 'clientName': clientName,
+          // 'clientCarNumber': clientCarNumber,
+          // 'clientIdentificationNumber': clientIdentificationNumber,
+          // 'licenceNumber': licenceNumber,
+          // 'clientPhone': clientPhone,
           'type': _parkingType.toString()
         },
       ),
@@ -329,20 +360,40 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-
-      print(jsonResponse);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ParkingDetailsScreen(
-            parkingId: jsonResponse['data']['id'],
+      parkingModel = ParkingModel.fromJson(jsonResponse['data']);
+      setState(() {});
+      debugPrint('Response : ${jsonResponse["message"]}.');
+      if (parkingModel != null) {
+        _startPrint(parkingModel?.printText ?? '', parkingModel?.id.toString());
+        debugPrint(jsonResponse.toString());
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ParkingDetailsScreen(
+              parkingId: parkingModel?.id,
+              fromHome: true,
+            ),
           ),
-        ),
-      );
-
-      debugPrint('Number of books about http: ${jsonResponse["message"]}.');
+        );
+      }
     } else {
       debugPrint('Request failed with status: ${response.body}.');
+    }
+  }
+
+  Future<void> _startPrint(String text, String? parkingId) async {
+    try {
+      var parameters = {
+        'print_text': text,
+        'parking_id': parkingId ?? '',
+      };
+
+      await const MethodChannel('com.example.new_parking/print').invokeMethod(
+        'startPrint',
+        Map.from(parameters),
+      );
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get printer status: '${e.message}'.");
     }
   }
 }

@@ -43,17 +43,27 @@ class _LoginScreenState extends State<LoginScreen> {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(
             horizontal: 25,
-            vertical: MediaQuery.of(context).size.height * 0.3,
+            vertical: MediaQuery.of(context).size.height * 0.2,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Parking',
-                style: TextStyle(
-                  color: Colors.cyan,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+              Image.asset(
+                'assets/logo.png',
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+              const Padding(
+                padding: EdgeInsets.all(18.0),
+                child: Text(
+                  'valet & parking management',
+                  style: TextStyle(
+                    color: Colors.cyan,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 50),
@@ -165,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var garage = jsonResponse['data']['garage']['id'];
       await LocalStorage.setString(LocalStorage.apiToken, token);
       await LocalStorage.setString(LocalStorage.garageId, garage.toString());
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => const MainHomePage(),

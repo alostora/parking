@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:new_parking/views/create_parking/create_parking.dart';
 import 'package:new_parking/views/home_page/tabs/scanner.dart';
 import 'package:new_parking/views/home_page/tabs/settings.dart';
-import 'tabs/all_parking.dart';
 
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
@@ -15,7 +15,8 @@ class _MainHomePageState extends State<MainHomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const AllParkingScreen(),
+    // const AllParkingScreen(),
+    const CreateParkingScreen(),
     const ScannerScreen(),
     const SettingsScreen(),
   ];
@@ -37,11 +38,11 @@ class _MainHomePageState extends State<MainHomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.car_rental_sharp),
-            label: 'Home',
+            label: 'Create',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.scanner),
-            label: 'Scanner',
+            label: 'Scan',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

@@ -20,9 +20,21 @@ class MyApp extends StatelessWidget {
           primary: Colors.cyan,
         ),
       ),
-      home: LocalStorage.getString(LocalStorage.apiToken) != null
-          ? const MainHomePage()
-          : const LoginScreen(),
+      debugShowCheckedModeBanner: false,
+      builder: (context, navigatorWidget) {
+        try {
+          /// very important to handle text size difference on mobile screens
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaleFactor: 1.0,
+            ),
+            child: navigatorWidget ?? const SizedBox(),
+          );
+        } catch (e) {
+          return navigatorWidget ?? const SizedBox();
+        }
+      },
+      home: LocalStorage.getString(LocalStorage.apiToken) != null ? const MainHomePage() : const LoginScreen(),
     );
   }
 }

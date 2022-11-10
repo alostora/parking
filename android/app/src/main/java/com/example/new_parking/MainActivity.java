@@ -25,7 +25,7 @@ public class MainActivity extends FlutterActivity {
                 .setMethodCallHandler(
                         (call, result) -> {
                             if (call.method.equals("startPrint")) {
-                                boolean status = startPrint(call.argument("print_text"));
+                                boolean status = startPrint(call.argument("print_text"), call.argument("parking_id"));
                                 if (status) {
                                     result.success(true);
                                 } else {
@@ -38,12 +38,63 @@ public class MainActivity extends FlutterActivity {
                 );
     }
 
-    private boolean startPrint(String printString) {
-        Log.d("FLUTTER PRINTER", "startPrint: " + printString);
+    /*
+  Function: void printBarCode(String data, int symbology, int height, int width, int textPosition, ICallback callback)
+Parameters:
+data the 1D barcode to be printed
+symbology
+barcode type (0-8): 0 UPC-A
+1 UPC-E
+2 JAN13(EAN13) 3 JAN8(EAN8)
+4 CODE39
+5 ITF
+6 CODABAR
+7 CODE93
+8 CODE128
+height 162
+width  2
+textPosition text position (0-3)
+0 don’t print text
+1 text above the barcode
+2 text under the barcode
+3 text above and under the barcode
+callback Result callback
+Note: the differences caused by different codes are listed below
+barcode height (ranges from 1-255. 162 by default). barcode width (ranges from 2-6. 2 by default).
+
+     */
+
+    private boolean startPrint(String printString, String parkingId) {
+        Log.d("FLUTTER PRINTER", "startPrint: " + printString + ", parking id: " + parkingId);
         InnerPrinterCallback innerPrinterCallback = new InnerPrinterCallback() {
             @Override
             protected void onConnected(SunmiPrinterService service) {
                 try {
+
+                    service.printBarCode(parkingId, 8, 162, 6, 2, new InnerResultCallback() {
+                        @Override
+                        public void onRunResult(boolean isSuccess) {
+                            Log.d("FLUTTER PRINTER", "onRunResult: " + isSuccess);
+                        }
+
+                        @Override
+                        public void onReturnString(String result) {
+                        }
+
+                        @Override
+                        public void onRaiseException(int code, String msg) {
+                        }
+
+                        @Override
+                        public void onPrintResult(int code, String msg) {
+                            try {
+                                service.exitPrinterBuffer(true);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
                     service.printOriginalText(printString, new InnerResultCallback() {
                         @Override
                         public void onRunResult(boolean isSuccess) {
@@ -56,12 +107,15 @@ public class MainActivity extends FlutterActivity {
 
                         @Override
                         public void onRaiseException(int code, String msg) {
-
                         }
 
                         @Override
                         public void onPrintResult(int code, String msg) {
-
+                            try {
+                                service.exitPrinterBuffer(true);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 } catch (RemoteException e) {
@@ -83,4 +137,3 @@ public class MainActivity extends FlutterActivity {
         return false;
     }
 }
-

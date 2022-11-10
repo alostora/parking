@@ -10,10 +10,12 @@ import 'package:new_parking/local_storage.dart';
 
 class ParkingDetailsScreen extends StatefulWidget {
   final dynamic parkingId;
+  final bool fromHome;
 
   const ParkingDetailsScreen({
     super.key,
     required this.parkingId,
+    this.fromHome = false,
   });
 
   @override
@@ -21,13 +23,13 @@ class ParkingDetailsScreen extends StatefulWidget {
 }
 
 class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
-  String _printerStatus = 'Printer status.';
   ParkingModel? parkingModel;
   String printText = 'No Data To Be Printed!';
 
   @override
   void initState() {
     super.initState();
+    debugPrint('Parking Details id =====>${widget.parkingId}');
     getSinglePark(widget.parkingId);
   }
 
@@ -44,42 +46,42 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Parking Information',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(_printerStatus),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Client Name : ${parkingModel?.clientName ?? ''}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Client Phone : ${parkingModel?.clientPhone ?? ''}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Car Number : ${parkingModel?.clientCarNumber ?? ''}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Id Number : ${parkingModel?.clientIdentificationNumber ?? ''}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Licence Number : ${parkingModel?.licenceNumber ?? ''}'),
-              ),
-              const Divider(
-                color: Colors.black,
-                thickness: 2,
-              ),
+              // const Padding(
+              //   padding: EdgeInsets.all(8.0),
+              //   child: Text(
+              //     'Parking Information',
+              //     style: TextStyle(fontWeight: FontWeight.w600),
+              //   ),
+              // ),
+              // const SizedBox(height: 10),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text(_printerStatus),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Client Name : ${parkingModel?.clientName ?? ''}'),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Client Phone : ${parkingModel?.clientPhone ?? ''}'),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Car Number : ${parkingModel?.clientCarNumber ?? ''}'),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Id Number : ${parkingModel?.clientIdentificationNumber ?? ''}'),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Licence Number : ${parkingModel?.licenceNumber ?? ''}'),
+              // ),
+              // const Divider(
+              //   color: Colors.black,
+              //   thickness: 2,
+              // ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
@@ -101,23 +103,40 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
               //   color: Colors.black,
               //   thickness: 2,
               // ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 25),
-                width: double.infinity,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.all(15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+              widget.fromHome
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(vertical: 25),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.cyan,
+                            padding: const EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: const Text('Back'),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          }),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(vertical: 25),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: const Text('End Parking'),
+                          onPressed: () async {
+                            await endParkedCar();
+                            await _startPrint();
+                          }),
                     ),
-                    child: const Text('End Parking'),
-                    onPressed: () async {
-                      await endParkedCar();
-                      await _startPrint();
-                    }),
-              ),
             ],
           ),
         ),
@@ -126,22 +145,20 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
   }
 
   Future<void> _startPrint() async {
-    String printerStatus;
     try {
-      var parameters = {'print_text': printText};
+      var parameters = {
+        'print_text': printText,
+        'parking_id': parkingModel?.id.toString(),
+      };
 
-      final bool result = await const MethodChannel('com.example.new_parking/print').invokeMethod(
+      await const MethodChannel('com.example.new_parking/print').invokeMethod(
         'startPrint',
         Map.from(parameters),
       );
-      printerStatus = 'printer status is $result % .';
     } on PlatformException catch (e) {
-      printerStatus = "Failed to get printer status: '${e.message}'.";
+      debugPrint("Failed to get printer status: '${e.message}'.");
     }
 
-    setState(() {
-      _printerStatus = printerStatus;
-    });
     // ignore: use_build_context_synchronously
     Navigator.of(context).pop();
   }
@@ -162,10 +179,10 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      debugPrint('Response=====>${jsonResponse.toString()}');
       parkingModel = ParkingModel.fromJson(jsonResponse['data']);
       printText = parkingModel?.printText ?? 'No Data To Be Printed!';
       setState(() {});
-      debugPrint('Number of books about http: ${jsonResponse["message"]}.');
     } else {
       debugPrint('Request failed with status: ${response.body}.');
     }

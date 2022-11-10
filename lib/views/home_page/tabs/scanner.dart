@@ -31,7 +31,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea =
-        (MediaQuery.of(context).size.width < 400 || MediaQuery.of(context).size.height < 400) ? 150.0 : 300.0;
+        (MediaQuery.of(context).size.width < 400 || MediaQuery.of(context).size.height < 400) ? 300.0 : 400.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
@@ -58,13 +58,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
       });
       if (result != null && (result?.code ?? '').isNotEmpty) {
         await controller.stopCamera();
+        String code = result!.code.toString();
+        debugPrint('Scanner result : $code');
         // ignore: use_build_context_synchronously
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ParkingDetailsScreen(
-              parkingId: result!.code,
-            ),
+            builder: (context) => ParkingDetailsScreen(parkingId: code),
           ),
         );
         await controller.resumeCamera();
@@ -149,7 +149,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: TextField(
                           controller: _parkingIdController,
