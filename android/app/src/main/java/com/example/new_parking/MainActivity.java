@@ -71,7 +71,7 @@ barcode height (ranges from 1-255. 162 by default). barcode width (ranges from 2
             protected void onConnected(SunmiPrinterService service) {
                 try {
 
-                    service.printBarCode(parkingId, 8, 162, 6, 2, new InnerResultCallback() {
+                    service.printBarCode(parkingId, 8, 162, 4, 2, new InnerResultCallback() {
                         @Override
                         public void onRunResult(boolean isSuccess) {
                             Log.d("FLUTTER PRINTER", "onRunResult: " + isSuccess);
