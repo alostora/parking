@@ -73,9 +73,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     cancelBtnText: 'No',
                     confirmBtnColor: Colors.green,
                     onConfirmBtnTap: () async {
-                      await LocalStorage.setString(LocalStorage.apiToken, null);
+                      await LocalStorage.signOut();
                       // ignore: use_build_context_synchronously
-                      Navigator.pushReplacement(
+                      Navigator.of(context).pop();
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const LoginScreen(),

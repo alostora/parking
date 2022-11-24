@@ -17,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _phone;
   late TextEditingController _password;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey.shade100,
       body: SizedBox(
         height: double.infinity,
@@ -72,12 +74,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 height: 60,
                 child: TextField(
                   controller: _phone,
                   keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.next,
                   style: const TextStyle(
                     color: Colors.black87,
                   ),
@@ -101,7 +110,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))],
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 height: 60,
                 child: TextField(
@@ -165,12 +180,15 @@ class _LoginScreenState extends State<LoginScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{'phone': phone, 'password': password}),
+      body: jsonEncode(<String, String>{
+        'phone': phone,
+        'password': password,
+      }),
     );
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-      print(jsonResponse);
+      debugPrint(jsonResponse.toString());
       var token = jsonResponse['data']['token'];
       var garage = jsonResponse['data']['garage']['id'];
       await LocalStorage.setString(LocalStorage.apiToken, token);
@@ -184,7 +202,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
       debugPrint('token: $token.');
     } else {
-      debugPrint('Request failed with status: ${response.statusCode}.');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text(
+            'Login Error',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+          content: Text(
+            jsonDecode(response.body)['message'].toString(),
+          ),
+        ),
+      );
+
+      debugPrint('Request failed : ${response.body.toString()}');
     }
   }
 }

@@ -9,12 +9,12 @@ import 'package:new_parking/data/all_parking_response.dart';
 import 'package:new_parking/local_storage.dart';
 
 class ParkingDetailsScreen extends StatefulWidget {
-  final dynamic parkingId;
+  final dynamic parkingCode;
   final bool fromHome;
 
   const ParkingDetailsScreen({
     super.key,
-    required this.parkingId,
+    required this.parkingCode,
     this.fromHome = false,
   });
 
@@ -29,8 +29,8 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('Parking Details id =====>${widget.parkingId}');
-    getSinglePark(widget.parkingId);
+    debugPrint('Parking Details id =====>${widget.parkingCode}');
+    getSinglePark(widget.parkingCode);
   }
 
   @override
@@ -148,7 +148,7 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
     try {
       var parameters = {
         'print_text': printText,
-        'parking_id': parkingModel?.id.toString(),
+        'parking_id': parkingModel?.code.toString(),
       };
 
       await const MethodChannel('com.example.new_parking/print').invokeMethod(
@@ -164,7 +164,7 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
   }
 
   Future<void> endParkedCar() async {
-    var url = Uri.parse('${RouteApi.mainUrl}${RouteApi.parkingCar}/${widget.parkingId}');
+    var url = Uri.parse('${RouteApi.mainUrl}${RouteApi.parkingCar}/${widget.parkingCode}');
     debugPrint(url.toString());
 
     var response = await http.patch(
@@ -174,7 +174,7 @@ class _ParkingDetailsScreenState extends State<ParkingDetailsScreen> {
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
       },
-      body: jsonEncode(<String, String>{'id': widget.parkingId.toString()}),
+      body: jsonEncode(<String, String>{'id': widget.parkingCode.toString()}),
     );
 
     if (response.statusCode == 200) {

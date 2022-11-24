@@ -1,5 +1,6 @@
 class RouteApi {
-  static const String mainUrl = "https://sa.vpmsystems.com/public/api/";
+  static const String mainUrl = "https://fouad.vpmsystems.com/public/api/";
+  // static const String mainUrl = "https://wahid.vpmsystems.com/public/api/";
 
   static String login = "login";
   static String allParkingCars = "parked-cars";

@@ -100,7 +100,7 @@ class _AllParkingScreenState extends State<AllParkingScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ParkingDetailsScreen(
-                                  parkingId: _allParking[index].id!,
+                                  parkingCode: _allParking[index].code!,
                                 ),
                               ),
                             );

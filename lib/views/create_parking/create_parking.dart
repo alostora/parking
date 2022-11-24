@@ -245,7 +245,6 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
               Row(
                 children: [
                   Radio(
@@ -258,7 +257,7 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
                       }),
                   const Expanded(
                     child: Text(
-                      'Valet Parking \n(150 SAR + %15 VAT)',
+                      'Valet Parking',
                       maxLines: 2,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
@@ -278,7 +277,7 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
                       }),
                   const Expanded(
                     child: Text(
-                      'Vip Parking \n(300 SAR + %15 VAT)',
+                      'Vip Parking',
                       maxLines: 2,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
@@ -298,7 +297,27 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
                       }),
                   const Expanded(
                     child: Text(
-                      'Per Hour Parking \n(15 SAR + %15 VAT)',
+                      'Per Hour Parking',
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Radio(
+                      value: 3,
+                      groupValue: _parkingType,
+                      onChanged: (value) {
+                        _parkingType = value ?? 0;
+                        setState(() {});
+                        debugPrint('Current parking type $value');
+                      }),
+                  const Expanded(
+                    child: Text(
+                      'Fine Parking',
                       maxLines: 2,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
@@ -364,13 +383,13 @@ class _CreateParkingScreenState extends State<CreateParkingScreen> {
       setState(() {});
       debugPrint('Response : ${jsonResponse["message"]}.');
       if (parkingModel != null) {
-        _startPrint(parkingModel?.printText ?? '', parkingModel?.id.toString());
+        _startPrint(parkingModel?.printText ?? '', parkingModel?.code.toString());
         debugPrint(jsonResponse.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ParkingDetailsScreen(
-              parkingId: parkingModel?.id,
+              parkingCode: parkingModel?.code,
               fromHome: true,
             ),
           ),

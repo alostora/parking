@@ -64,7 +64,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ParkingDetailsScreen(parkingId: code),
+            builder: (context) => ParkingDetailsScreen(parkingCode: code),
           ),
         );
         await controller.resumeCamera();
@@ -183,7 +183,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ParkingDetailsScreen(
-                                  parkingId: _parkingIdController.text,
+                                  parkingCode: _parkingIdController.text,
                                 ),
                               ),
                             );
