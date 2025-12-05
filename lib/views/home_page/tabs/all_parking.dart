@@ -94,7 +94,7 @@ class _AllParkingScreenState extends State<AllParkingScreen> {
                           leading: const Icon(Icons.car_repair, size: 40),
                           title:
                               Text(_allParking[index].clientName ?? '', style: Theme.of(context).textTheme.labelLarge),
-                          subtitle: Text(_allParking[index].code ?? '', style: Theme.of(context).textTheme.caption),
+                          subtitle: Text(_allParking[index].code ?? '', style: Theme.of(context).textTheme.labelSmall),
                           onTap: () {
                             Navigator.push(
                               context,

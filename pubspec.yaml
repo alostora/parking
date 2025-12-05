@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   get_storage: ^2.0.3
-  qr_code_scanner: ^1.0.1
+  qr_code_scanner_plus: ^2.0.14
   quickalert: ^1.0.0
 
 
